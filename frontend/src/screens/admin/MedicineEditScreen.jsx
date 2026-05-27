@@ -7,6 +7,7 @@ import {
   useGetMedicineDetailsQuery,
   useUpdateMedicineMutation,
   useUploadMedicineImageMutation,
+  useDeleteMedicineMutation,
 } from '../../slices/medicinesApiSlice';
 import { useGetCategoriesQuery } from '../../slices/categoriesApiSlice';
 
@@ -25,11 +26,16 @@ const MedicineEditScreen = () => {
   const [batchId, setBatchId] = useState('');
   const [supplier, setSupplier] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
+  const [composition, setComposition] = useState('');
+  const [dosage, setDosage] = useState('');
+  const [manufacturer, setManufacturer] = useState('');
+  const [sideEffects, setSideEffects] = useState('');
 
   const { data: categoriesData } = useGetCategoriesQuery();
   const { data: medicine, isLoading, error, refetch } = useGetMedicineDetailsQuery(medicineId);
   const [updateMedicine, { isLoading: loadingUpdate }] = useUpdateMedicineMutation();
   const [uploadMedicineImage, { isLoading: loadingUpload }] = useUploadMedicineImageMutation();
+  const [deleteMedicine] = useDeleteMedicineMutation();
 
   const navigate = useNavigate();
 
@@ -46,6 +52,10 @@ const MedicineEditScreen = () => {
       setDiscountPercentage(medicine.discountPercentage);
       setBatchId(medicine.batchId || '');
       setSupplier(medicine.supplier || '');
+      setComposition(medicine.composition || '');
+      setDosage(medicine.dosage || '');
+      setManufacturer(medicine.manufacturer || '');
+      setSideEffects(medicine.sideEffects || '');
       // Format expiryDate for input type="date"
       if (medicine.expiryDate) {
         setExpiryDate(new Date(medicine.expiryDate).toISOString().split('T')[0]);
@@ -70,12 +80,27 @@ const MedicineEditScreen = () => {
         batchId,
         supplier,
         expiryDate,
+        composition,
+        dosage,
+        manufacturer,
+        sideEffects,
       }).unwrap();
       refetch();
       navigate('/admin/medicinelist');
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const backHandler = async () => {
+    if (medicine && medicine.name === 'Sample name') {
+      try {
+        await deleteMedicine(medicineId).unwrap();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    navigate('/admin/medicinelist');
   };
 
   const uploadFileHandler = async (e) => {
@@ -97,10 +122,13 @@ const MedicineEditScreen = () => {
 
   return (
     <div className='max-w-5xl mx-auto'>
-      <Link to='/admin/medicinelist' className='inline-flex items-center text-gray-500 hover:text-pe-teal mb-6 font-medium bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 transition-colors'>
+      <button 
+        onClick={backHandler} 
+        className='inline-flex items-center text-gray-500 hover:text-pe-teal mb-6 font-medium bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 transition-colors cursor-pointer'
+      >
         <ArrowLeft className='w-4 h-4 mr-2' />
         Back to Products
-      </Link>
+      </button>
 
       <div className='bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden'>
         <div className='bg-pe-teal px-8 py-6 border-b border-pe-teal/20'>
@@ -131,13 +159,36 @@ const MedicineEditScreen = () => {
                   />
                 </div>
                 <div>
-                  <label className='block text-gray-700 text-sm font-bold mb-2'>Generic Name / Composition</label>
+                  <label className='block text-gray-700 text-sm font-bold mb-2'>Generic Name</label>
                   <input
                     type='text'
                     className='appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-pe-teal focus:border-transparent transition-all'
-                    placeholder='e.g. Acetaminophen'
+                    placeholder='e.g. Paracetamol'
                     value={genericName}
                     onChange={(e) => setGenericName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className='block text-gray-700 text-sm font-bold mb-2'>Manufacturer</label>
+                  <input
+                    type='text'
+                    className='appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-pe-teal focus:border-transparent transition-all'
+                    placeholder='e.g. Cipla Ltd'
+                    value={manufacturer}
+                    onChange={(e) => setManufacturer(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className='block text-gray-700 text-sm font-bold mb-2'>Composition</label>
+                  <input
+                    type='text'
+                    className='appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-pe-teal focus:border-transparent transition-all'
+                    placeholder='e.g. Paracetamol IP 500mg'
+                    value={composition}
+                    onChange={(e) => setComposition(e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -244,6 +295,27 @@ const MedicineEditScreen = () => {
                       </option>
                     ))}
                   </select>
+                </div>
+                <div>
+                  <label className='block text-gray-700 text-sm font-bold mb-2'>Recommended Dosage</label>
+                  <input
+                    type='text'
+                    className='appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-pe-teal focus:border-transparent transition-all'
+                    placeholder='e.g. 1 tablet twice a day after meals'
+                    value={dosage}
+                    onChange={(e) => setDosage(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className='block text-gray-700 text-sm font-bold mb-2'>Possible Side Effects</label>
+                  <input
+                    type='text'
+                    className='appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-pe-teal focus:border-transparent transition-all'
+                    placeholder='e.g. Drowsiness, Nausea, Dizziness'
+                    value={sideEffects}
+                    onChange={(e) => setSideEffects(e.target.value)}
+                  />
                 </div>
                 <div className='flex items-center mt-6'>
                   <label className='flex items-center cursor-pointer bg-orange-50 px-4 py-3 rounded-xl border border-orange-100 w-full hover:bg-orange-100 transition-colors'>

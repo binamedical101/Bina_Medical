@@ -29,3 +29,12 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* Ensure all links, buttons, and custom button roles display a pointer cursor */
+a, 
+button, 
+select,
+[role="button"],
+.cursor-pointer {
+  cursor: pointer !important;
+}
