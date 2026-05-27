@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
-import crypto from 'crypto';
+import { randomUUID } from 'crypto';
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -12,7 +12,7 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
-    const sessionId = crypto.randomUUID();
+    const sessionId = randomUUID();
     user.activeSessionId = sessionId;
     await user.save();
 
@@ -43,7 +43,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  const sessionId = crypto.randomUUID();
+  const sessionId = randomUUID();
   const user = await User.create({
     name,
     email,
