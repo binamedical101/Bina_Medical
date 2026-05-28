@@ -6,11 +6,14 @@ import { useSelector } from 'react-redux';
 import { useGetSettingsQuery } from './slices/settingsApiSlice';
 import Loader from './components/Loader';
 import { ShieldAlert } from 'lucide-react';
+import useSessionTimeout from './hooks/useSessionTimeout';
 
 function App() {
   const { userInfo } = useSelector((state) => state.auth);
   const { data: settings, isLoading } = useGetSettingsQuery();
   const location = useLocation();
+
+  useSessionTimeout();
 
   if (isLoading) return <Loader />;
 

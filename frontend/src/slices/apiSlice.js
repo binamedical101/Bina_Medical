@@ -12,6 +12,12 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
   if (result.error && result.error.status === 401) {
     api.dispatch(logout());
+  } else if (!result.error) {
+    const { auth } = api.getState();
+    if (auth && auth.userInfo) {
+      const expirationTime = new Date().getTime() + 15 * 60 * 1000;
+      localStorage.setItem('sessionExpiration', expirationTime.toString());
+    }
   }
 
   return result;

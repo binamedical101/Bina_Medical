@@ -18,8 +18,11 @@ import {
 import { useDispatch } from 'react-redux';
 import { logout } from '../slices/authSlice';
 import { useLogoutMutation } from '../slices/usersApiSlice';
+import useSessionTimeout from '../hooks/useSessionTimeout';
 
 const AdminLayout = () => {
+  useSessionTimeout();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
