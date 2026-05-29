@@ -61,19 +61,12 @@ const OrderScreen = () => {
   return (
     <div className='py-0'>
       <div className='flex items-center mb-8'>
-        <button 
-          onClick={() => navigate(-1)}
-          className='mr-4 p-2 bg-white hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center border border-gray-200 shadow-sm'
-          title='Go Back'
-        >
-          <ArrowLeft className='w-6 h-6 text-gray-600' />
-        </button>
         <h1 className='text-2xl font-bold text-gray-900'>Order: {order._id}</h1>
       </div>
-      
+
       <div className='flex flex-col lg:flex-row gap-8'>
         <div className='lg:w-2/3 flex flex-col gap-6'>
-          
+
           <div className='bg-white p-6 rounded-2xl shadow-sm border border-gray-100'>
             <h2 className='text-xl font-bold text-gray-900 mb-4 flex items-center'>
               <Truck className='w-5 h-5 mr-2 text-blue-600' />
@@ -95,13 +88,17 @@ const OrderScreen = () => {
                 <Message variant='success'>Delivered on {order.deliveredAt?.substring(0, 10)}</Message>
               ) : order.status === 'Shipped' ? (
                 <Message variant='info'>Shipped (On the way)</Message>
+              ) : order.status === 'Dispatched' ? (
+                <Message variant='info'>Dispatched From Pharmacy</Message>
+              ) : order.status === 'Out for delivery' ? (
+                <Message variant='info'>Out for delivery</Message>
               ) : order.status === 'Cancelled' ? (
                 <Message variant='danger'>Cancelled</Message>
               ) : (
                 <Message variant='warning'>Processing</Message>
               )}
             </div>
-            
+
 
           </div>
 
@@ -151,7 +148,7 @@ const OrderScreen = () => {
         <div className='lg:w-1/3'>
           <div className='bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24'>
             <h2 className='text-xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-100'>Order Summary</h2>
-            
+
             <div className='flex justify-between mb-4 text-gray-600'>
               <span>Items</span>
               <span>₹{order.itemsPrice.toFixed(2)}</span>
@@ -171,7 +168,7 @@ const OrderScreen = () => {
                 <span>-₹{order.couponDiscount.toFixed(2)}</span>
               </div>
             )}
-            
+
             <div className='flex justify-between mb-8 text-xl font-extrabold text-gray-900 pt-4 border-t border-gray-100'>
               <span>Total</span>
               <span>₹{order.totalPrice.toFixed(2)}</span>
@@ -182,7 +179,7 @@ const OrderScreen = () => {
             {userInfo && userInfo.role === 'Admin' && (
               <div className='mt-8 border-t border-gray-100 pt-6'>
                 <h3 className='text-lg font-bold text-gray-900 mb-4'>Admin Controls</h3>
-                
+
                 <div className='flex flex-col gap-4 mb-4'>
                   <div>
                     <label className='block text-xs font-bold text-gray-700 mb-1'>Order Status</label>
@@ -191,10 +188,18 @@ const OrderScreen = () => {
                       value={orderStatus}
                       onChange={(e) => setOrderStatus(e.target.value)}
                     >
-                      <option value='Processing'>Processing</option>
-                      <option value='Shipped'>Shipped</option>
-                      <option value='Delivered'>Delivered</option>
-                      <option value='Cancelled'>Cancelled</option>
+                      {['Processing', 'Shipped', 'Dispatched', 'Out for delivery', 'Delivered'].map((opt, idx) => {
+                        const flow = ['Processing', 'Shipped', 'Dispatched', 'Out for delivery', 'Delivered'];
+                        const currentIdx = flow.indexOf(order.status || 'Processing');
+                        return (
+                          <option key={opt} value={opt} disabled={idx < currentIdx || order.status === 'Cancelled'}>
+                            {opt}
+                          </option>
+                        );
+                      })}
+                      <option value='Cancelled' disabled={['Shipped', 'Dispatched', 'Out for delivery', 'Delivered'].includes(order.status) || order.status === 'Cancelled'}>
+                        Cancelled
+                      </option>
                     </select>
                   </div>
 

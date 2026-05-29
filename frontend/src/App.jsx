@@ -18,7 +18,11 @@ function App() {
   if (isLoading) return <Loader />;
 
   const isMaintenance = settings?.maintenanceMode && (!userInfo || userInfo.role !== 'Admin');
-  const showHeaderFooter = location.pathname !== '/login' && location.pathname !== '/register';
+  const showHeaderFooter =
+    location.pathname !== '/login' &&
+    location.pathname !== '/register' &&
+    location.pathname !== '/forgot-password' &&
+    !location.pathname.startsWith('/reset-password');
 
   return (
     <div className='min-h-screen flex flex-col bg-pe-bg font-sans'>

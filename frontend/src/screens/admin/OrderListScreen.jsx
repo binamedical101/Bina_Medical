@@ -19,7 +19,7 @@ const OrderListScreen = () => {
           <p className='text-gray-500 text-sm mt-1'>View and update customer orders, delivery status, and refunds.</p>
         </div>
       </div>
-      
+
       <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
         <div className='overflow-x-auto'>
           <table className='w-full text-left border-collapse'>
@@ -57,12 +57,13 @@ const OrderListScreen = () => {
                     )}
                   </td>
                   <td className='px-6 py-4'>
-                    <span className={`inline-flex items-center text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                      order.status === 'Delivered' ? 'bg-green-100 text-green-800' : 
-                      order.status === 'Shipped' ? 'bg-blue-100 text-blue-800' : 
-                      order.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
-                      'bg-orange-100 text-orange-800'
-                    }`}>
+                    <span className={`inline-flex items-center text-xs font-bold px-2.5 py-0.5 rounded-full ${order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
+                      order.status === 'Out for delivery' ? 'bg-purple-100 text-purple-800' :
+                        order.status === 'Dispatched' ? 'bg-indigo-100 text-indigo-800' :
+                          order.status === 'Shipped' ? 'bg-blue-100 text-blue-800' :
+                            order.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
+                              'bg-orange-100 text-orange-800'
+                      }`}>
                       {order.status || 'Processing'}
                     </span>
                     {order.trackingId && (
@@ -72,7 +73,7 @@ const OrderListScreen = () => {
                     )}
                   </td>
                   <td className='px-6 py-4 text-right'>
-                    <Link to={`/order/${order._id}`}>
+                    <Link to={`/admin/order/${order._id}`}>
                       <button className='p-2 text-pe-teal bg-pe-teal-light hover:bg-pe-teal hover:text-white rounded-lg transition-colors' title='Manage Order'>
                         <Eye className='w-4 h-4' />
                       </button>
