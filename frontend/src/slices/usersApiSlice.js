@@ -71,6 +71,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: { password: data.password },
       }),
     }),
+    verifyEmail: builder.mutation({
+      query: (token) => ({
+        url: `${USERS_URL}/verify-email/${token}`,
+        method: 'PUT',
+      }),
+    }),
   }),
 });
 
@@ -85,4 +91,5 @@ export const {
   useUpdateUserMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useVerifyEmailMutation,
 } = usersApiSlice;

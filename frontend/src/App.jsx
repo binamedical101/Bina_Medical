@@ -22,7 +22,8 @@ function App() {
     location.pathname !== '/login' &&
     location.pathname !== '/register' &&
     location.pathname !== '/forgot-password' &&
-    !location.pathname.startsWith('/reset-password');
+    !location.pathname.startsWith('/reset-password') &&
+    !location.pathname.startsWith('/verify-email');
 
   return (
     <div className='min-h-screen flex flex-col bg-pe-bg font-sans'>

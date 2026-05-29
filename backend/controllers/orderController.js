@@ -5,105 +5,9 @@ import Setting from '../models/settingModel.js';
 import Coupon from '../models/couponModel.js';
 import sendEmail from '../utils/sendEmail.js';
 
-// Helper to send order status update email
+// Helper to send order status update email (Disabled per user requirements)
 const sendOrderStatusEmail = async (order, statusText) => {
-  try {
-    const settings = await Setting.findOne();
-    if (settings && !settings.emailNotifications) return;
-
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Order Status Update</title>
-      </head>
-      <body style="margin: 0; padding: 0; background-color: #f6f9fc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f6f9fc; padding: 20px 0;">
-          <tr>
-            <td align="center">
-              <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #eef2f6;">
-                <!-- Header -->
-                <tr>
-                  <td style="background: linear-gradient(135deg, #129a93 0%, #0d7670 100%); padding: 30px; text-align: center; color: #ffffff;">
-                    <h1 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">Bina Medical</h1>
-                    <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">Order Status Notification</p>
-                  </td>
-                </tr>
-                
-                <!-- Body Content -->
-                <tr>
-                  <td style="padding: 40px 30px; color: #333333;">
-                    <h2 style="margin-top: 0; font-size: 20px; font-weight: 700; color: #111111;">Your Order Status has Been Updated</h2>
-                    <p style="font-size: 15px; line-height: 1.6; color: #555555; margin-bottom: 25px;">
-                      Hi ${order.user?.name || 'there'},<br>
-                      We wanted to let you know that the status of your order <strong>#${order._id}</strong> has changed to:
-                    </p>
-                    
-                    <!-- Status Banner -->
-                    <div style="background-color: #f0fdf4; border-left: 4px solid #129a93; border-radius: 4px; padding: 15px; margin-bottom: 30px; text-align: center;">
-                      <span style="font-size: 18px; font-weight: bold; color: #0d7670; text-transform: uppercase; letter-spacing: 0.5px;">
-                        ${statusText}
-                      </span>
-                    </div>
-
-                    <!-- Details Box -->
-                    <div style="background-color: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 30px; border: 1px solid #e2e8f0;">
-                      <table width="100%" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td style="font-size: 14px; color: #64748b; padding-bottom: 8px;">Order ID</td>
-                          <td style="font-size: 14px; font-weight: bold; color: #1e293b; text-align: right; padding-bottom: 8px;">#${order._id}</td>
-                        </tr>
-                        ${order.trackingId ? `
-                        <tr>
-                          <td style="font-size: 14px; color: #64748b; padding-bottom: 8px;">Tracking ID</td>
-                          <td style="font-size: 14px; font-weight: bold; color: #1e293b; text-align: right; padding-bottom: 8px;">${order.trackingId}</td>
-                        </tr>` : ''}
-                        ${order.deliveryPartner ? `
-                        <tr>
-                          <td style="font-size: 14px; color: #64748b; padding-bottom: 8px;">Delivery Partner</td>
-                          <td style="font-size: 14px; font-weight: bold; color: #1e293b; text-align: right; padding-bottom: 8px;">${order.deliveryPartner}</td>
-                        </tr>` : ''}
-                        <tr>
-                          <td style="font-size: 14px; color: #64748b;">Total Price</td>
-                          <td style="font-size: 14px; font-weight: bold; color: #129a93; text-align: right;">₹${order.totalPrice.toFixed(2)}</td>
-                        </tr>
-                      </table>
-                    </div>
-
-                    <p style="font-size: 14px; color: #64748b; margin-top: 30px; margin-bottom: 0; line-height: 1.5; text-align: center;">
-                      You can view the full details and track your order directly in your dashboard profile.
-                    </p>
-                  </td>
-                </tr>
-
-                <!-- Footer -->
-                <tr>
-                  <td style="background-color: #f8fafc; padding: 25px 30px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9;">
-                    &copy; 2026 Bina Medical. All rights reserved.<br>
-                    This is an automated order notification. Please do not reply directly.
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </body>
-      </html>
-    `;
-
-    if (order.user && order.user.email) {
-      sendEmail({
-        email: order.user.email,
-        subject: `Order Update - Bina Medical #${order._id}`,
-        message: `Your order #${order._id} status has been updated to: ${statusText}.`,
-        html: htmlContent,
-      });
-    }
-  } catch (error) {
-    console.error('Error sending order status email:', error);
-  }
+  return;
 };
 
 // @desc    Create new order
@@ -378,6 +282,11 @@ const addOrderItems = asyncHandler(async (req, res) => {
                         </tbody>
                       </table>
 
+                      <!-- Track Order Button -->
+                      <div style="text-align: center; margin: 30px 0;">
+                        <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/order/${createdOrder._id}" style="background-color: #129a93; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px rgba(18, 154, 147, 0.2);">Track Your Order</a>
+                      </div>
+
                       <p style="font-size: 14px; color: #64748b; margin-top: 30px; margin-bottom: 0; line-height: 1.5; text-align: center;">
                         If you have any questions, feel free to reply to this email or contact support.
                       </p>
@@ -403,7 +312,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
       sendEmail({
         email: req.user.email,
         subject: `Order Confirmation - Bina Medical #${createdOrder._id}`,
-        message: `Thank you for your order!\n\nYour order ID is ${createdOrder._id}. The total price is ₹${createdOrder.totalPrice.toFixed(2)}.`,
+        message: `Thank you for your order!\n\nYour order ID is ${createdOrder._id}. The total price is ₹${createdOrder.totalPrice.toFixed(2)}.\n\nYou can track your order here: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/order/${createdOrder._id}`,
         html: htmlContent,
       });
     }

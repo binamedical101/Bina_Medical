@@ -24,6 +24,7 @@ import LoginScreen from './screens/LoginScreen.jsx';
 import RegisterScreen from './screens/RegisterScreen.jsx';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.jsx';
 import ResetPasswordScreen from './screens/ResetPasswordScreen.jsx';
+import VerifyEmailScreen from './screens/VerifyEmailScreen.jsx';
 import ShippingScreen from './screens/ShippingScreen.jsx';
 import PaymentScreen from './screens/PaymentScreen.jsx';
 import PlaceOrderScreen from './screens/PlaceOrderScreen.jsx';
@@ -62,6 +63,7 @@ const router = createBrowserRouter(
         <Route path='/register' element={<RegisterScreen />} />
         <Route path='/forgot-password' element={<ForgotPasswordScreen />} />
         <Route path='/reset-password/:token' element={<ResetPasswordScreen />} />
+        <Route path='/verify-email/:token' element={<VerifyEmailScreen />} />
 
         {/* Registered users */}
         <Route path='' element={<PrivateRoute />}>
