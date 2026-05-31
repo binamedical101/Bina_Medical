@@ -16,7 +16,9 @@ const sendEmail = async (options) => {
       user: process.env.SMTP_USER || 'demo_user',
       pass: process.env.SMTP_PASS || 'demo_pass',
     },
-    family: 4, // Force IPv4 to prevent ENETUNREACH on IPv6-unsupported networks like Render
+    lookup: (hostname, options, callback) => {
+      dns.lookup(hostname, { ...options, family: 4 }, callback);
+    },
   });
 
   // Define email options
