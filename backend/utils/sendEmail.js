@@ -1,14 +1,20 @@
 import nodemailer from 'nodemailer';
 
 const sendEmail = async (options) => {
+  const port = Number(process.env.SMTP_PORT) || 2525;
+  const isSecure = port === 465;
+
   // Create a transporter
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
-    port: process.env.SMTP_PORT || 2525,
+    port: port,
+    secure: isSecure,
     auth: {
       user: process.env.SMTP_USER || 'demo_user',
       pass: process.env.SMTP_PASS || 'demo_pass',
     },
+    connectionTimeout: 5000, // 5 seconds timeout
+    socketTimeout: 5000,
   });
 
   // Define email options
@@ -26,6 +32,7 @@ const sendEmail = async (options) => {
     console.log('Email sent successfully to', options.email);
   } catch (error) {
     console.error('Error sending email:', error);
+    throw error;
   }
 };
 

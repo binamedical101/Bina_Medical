@@ -8,7 +8,13 @@ import dns from 'dns';
 // Helper function to resolve MX records (checks for RFC 7505 Null MX)
 const checkMxRecords = (domain) => {
   return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      console.log(`[MX Check] DNS resolution timed out for domain: ${domain}`);
+      resolve(false);
+    }, 4000);
+
     dns.resolveMx(domain, (err, addresses) => {
+      clearTimeout(timeout);
       if (err || !addresses || addresses.length === 0) {
         resolve(false);
       } else {
@@ -130,22 +136,18 @@ const registerUser = asyncHandler(async (req, res) => {
       </div>
     `;
 
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: 'Bina Medical - Verify Your Email Address',
-        message,
-        html,
-      });
+    sendEmail({
+      email: user.email,
+      subject: 'Bina Medical - Verify Your Email Address',
+      message,
+      html,
+    }).catch((error) => {
+      console.error('Registration email failed to send:', error);
+    });
 
-      res.status(201).json({
-        message: 'Registration successful! Please check your email to verify your account.',
-      });
-    } catch (error) {
-      await User.deleteOne({ _id: user._id });
-      res.status(500);
-      throw new Error('Verification email could not be sent. Registration cancelled.');
-    }
+    res.status(201).json({
+      message: 'Registration successful! Please check your email to verify your account.',
+    });
   } else {
     res.status(400);
     throw new Error('Invalid user data');
@@ -266,26 +268,19 @@ const updateUserProfile = asyncHandler(async (req, res) => {
           </div>
         `;
 
-        try {
-          await sendEmail({
-            email: newEmail,
-            subject: 'Bina Medical - Verify Your New Email Address',
-            message,
-            html,
-          });
+        sendEmail({
+          email: newEmail,
+          subject: 'Bina Medical - Verify Your New Email Address',
+          message,
+          html,
+        }).catch((error) => {
+          console.error('New email OTP email failed to send:', error);
+        });
 
-          return res.json({
-            emailOtpSent: true,
-            message: 'Verification code sent to new email address',
-          });
-        } catch (error) {
-          user.tempEmail = undefined;
-          user.emailOtp = undefined;
-          user.emailOtpExpire = undefined;
-          await user.save();
-          res.status(500);
-          throw new Error('Verification email could not be sent. Please try again.');
-        }
+        return res.json({
+          emailOtpSent: true,
+          message: 'Verification code sent to new email address',
+        });
       } else {
         // OTP is provided, verify it
         if (newEmail !== user.tempEmail) {
