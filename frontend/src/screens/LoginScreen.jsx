@@ -23,6 +23,14 @@ const LoginScreen = () => {
   const sp = new URLSearchParams(search);
   const redirect = sp.get('redirect') || '/';
 
+  const [successMsg, setSuccessMsg] = useState('');
+
+  useEffect(() => {
+    if (sp.get('registered') === 'true') {
+      setSuccessMsg('Registration successful! Please sign in to access your account.');
+    }
+  }, [search]);
+
   useEffect(() => {
     if (userInfo) {
       if (userInfo.role === 'Admin') {
@@ -72,6 +80,7 @@ const LoginScreen = () => {
 
         <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/20">
           {error && <Message variant='danger'>{error?.data?.message || error.error}</Message>}
+          {successMsg && <Message variant='success'>{successMsg}</Message>}
 
           <form className="mt-4 space-y-6" onSubmit={submitHandler}>
             <div className="space-y-4">

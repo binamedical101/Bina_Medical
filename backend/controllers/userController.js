@@ -113,24 +113,22 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     activeSessionId: sessionId,
-    isVerified: false,
+    isVerified: true,
     verificationToken,
   });
 
   if (user) {
-    const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email/${verificationToken}`;
+    const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/login`;
 
-    const message = `Thank you for registering at Bina Medical. Please click the link below to verify your email address:\n\n${verificationUrl}`;
+    const message = `Welcome to Bina Medical, ${user.name}! Your account has been successfully created. You can now log in at:\n\n${loginUrl}`;
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
         <h2 style="color: #129a93; text-align: center;">Welcome to Bina Medical!</h2>
         <p>Hello ${user.name},</p>
-        <p>Thank you for registering. Please click the button below to verify your email address and activate your account:</p>
+        <p>Thank you for registering. Your account has been successfully created and is ready to use.</p>
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${verificationUrl}" style="background-color: #129a93; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Verify Email Address</a>
+          <a href="${loginUrl}" style="background-color: #129a93; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Log In to Your Account</a>
         </div>
-        <p style="color: #718096; font-size: 0.875rem;">If the button above doesn't work, copy and paste this URL into your browser:</p>
-        <p style="word-break: break-all; color: #129a93; font-size: 0.875rem;">${verificationUrl}</p>
         <hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0;" />
         <p style="color: #a0aec0; font-size: 0.75rem; text-align: center;">This is an automated email, please do not reply.</p>
       </div>
@@ -138,7 +136,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     sendEmail({
       email: user.email,
-      subject: 'Bina Medical - Verify Your Email Address',
+      subject: 'Welcome to Bina Medical',
       message,
       html,
     }).catch((error) => {
@@ -146,7 +144,7 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     res.status(201).json({
-      message: 'Registration successful! Please check your email to verify your account.',
+      message: 'Registration successful! Please log in to your account.',
     });
   } else {
     res.status(400);

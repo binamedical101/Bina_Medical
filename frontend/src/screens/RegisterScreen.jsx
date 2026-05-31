@@ -42,8 +42,8 @@ const RegisterScreen = () => {
     }
     setValidationError('');
     try {
-      const res = await register({ name, email, password }).unwrap();
-      setSuccessMsg(res.message || 'Registration successful! Please check your email to verify.');
+      await register({ name, email, password }).unwrap();
+      navigate('/login?registered=true');
     } catch (err) {
       console.log(err);
     }
