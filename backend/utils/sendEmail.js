@@ -1,4 +1,7 @@
 import nodemailer from 'nodemailer';
+import dns from 'dns';
+
+dns.setDefaultResultOrder('ipv4first');
 
 const sendEmail = async (options) => {
   const port = Number(process.env.SMTP_PORT) || 2525;

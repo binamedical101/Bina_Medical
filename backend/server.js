@@ -5,9 +5,12 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import dns from 'dns';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+
+dns.setDefaultResultOrder('ipv4first');
 import medicineRoutes from './routes/medicineRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
