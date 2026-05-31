@@ -1,29 +1,19 @@
 import nodemailer from 'nodemailer';
-import dns from 'dns';
-
-dns.setDefaultResultOrder('ipv4first');
 
 const sendEmail = async (options) => {
-  const port = Number(process.env.SMTP_PORT) || 2525;
-  const isSecure = port === 465;
-
   // Create a transporter
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
-    port: port,
-    secure: isSecure,
+    port: process.env.SMTP_PORT || 2525,
     auth: {
       user: process.env.SMTP_USER || 'demo_user',
       pass: process.env.SMTP_PASS || 'demo_pass',
-    },
-    lookup: (hostname, options, callback) => {
-      dns.lookup(hostname, { ...options, family: 4 }, callback);
     },
   });
 
   // Define email options
   const mailOptions = {
-    from: `Bina Medical <${process.env.SMTP_USER}>`,
+    from: 'Bina Medical <noreply@binamedical.com>',
     to: options.email,
     subject: options.subject,
     text: options.message,
@@ -36,7 +26,6 @@ const sendEmail = async (options) => {
     console.log('Email sent successfully to', options.email);
   } catch (error) {
     console.error('Error sending email:', error);
-    throw error;
   }
 };
 
