@@ -41,6 +41,11 @@ const authUser = asyncHandler(async (req, res) => {
   }
 
   if (await user.matchPassword(password)) {
+    if (!user.isVerified) {
+      res.status(401);
+      throw new Error('Please verify your email address before logging in');
+    }
+
     const sessionId = randomUUID();
     user.activeSessionId = sessionId;
     await user.save();
