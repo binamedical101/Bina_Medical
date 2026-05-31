@@ -13,8 +13,6 @@ const sendEmail = async (options) => {
       user: process.env.SMTP_USER || 'demo_user',
       pass: process.env.SMTP_PASS || 'demo_pass',
     },
-    connectionTimeout: 5000, // 5 seconds timeout
-    socketTimeout: 5000,
     family: 4, // Force IPv4 to prevent ENETUNREACH on IPv6-unsupported networks like Render
   });
 
