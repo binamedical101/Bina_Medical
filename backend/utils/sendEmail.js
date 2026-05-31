@@ -19,7 +19,7 @@ const sendEmail = async (options) => {
 
   // Define email options
   const mailOptions = {
-    from: 'Bina Medical <noreply@binamedical.com>',
+    from: `Bina Medical <${process.env.SMTP_USER}>`,
     to: options.email,
     subject: options.subject,
     text: options.message,
